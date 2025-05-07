@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/challenge
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - PERCENTAGE_SERVICE_URL=http://percentage-mock:1080/percentage
+    depends_on:
+      - postgres
+      - percentage-mock
+    networks:
+      - challenge-network
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=challenge
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - challenge-network
+
+  percentage-mock:
+    image: mockserver/mockserver
+    ports:
+      - "1080:1080"
+    environment:
+      - SERVER_PORT=1080
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/initializerJson.json
+    volumes:
+      - ./mock-config:/config
+    networks:
+      - challenge-network
+
+networks:
+  challenge-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

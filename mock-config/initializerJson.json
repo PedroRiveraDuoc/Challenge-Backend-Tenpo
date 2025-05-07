@@ -1,0 +1,17 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/percentage"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "value": 0.10
+      },
+      "headers": {
+        "Content-Type": ["application/json"]
+      }
+    }
+  }
+] 
