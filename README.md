@@ -1,4 +1,4 @@
-# Challenge Backend
+# Challenge Backend Tenpo
 
 API REST para cálculos con porcentaje dinámico.
 
@@ -50,7 +50,7 @@ src/main/java/com/example/challenge/
 
 ## Ejecución Local
 
-### Opción 1: Ejecución con Docker Compose
+### Opción 1: Ejecución con Docker Compose (Opción recomendada)
 
 1. Compilar el proyecto:
 ```bash
@@ -152,8 +152,3 @@ Response:
 - Nivel aplicación: DEBUG
 - Nivel caché: TRACE
 - Nivel web: INFO
-
-## Pruebas
-
-Ejecutar las pruebas:
-```
