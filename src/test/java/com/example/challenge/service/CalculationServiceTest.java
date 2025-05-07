@@ -32,24 +32,24 @@ class CalculationServiceTest {
 
     @Test
     void calculate_ShouldReturnCorrectResult_WhenPercentageIsAvailable() {
-        // Arrange
+        // Given
         when(percentageClient.getPercentage()).thenReturn(0.10);
 
-        // Act
+        // When
         CalculationResponse response = calculationService.calculate(request);
 
-        // Assert
+        // Then
         assertEquals(33.0, response.result());
         assertEquals(0.10, response.percentage());
     }
 
     @Test
     void calculate_ShouldThrowException_WhenPercentageServiceIsUnavailable() {
-        // Arrange
+        // Given
         when(percentageClient.getPercentage())
                 .thenThrow(new PercentageUnavailableException("Service unavailable"));
 
-        // Act & Assert
+        // When & Then
         assertThrows(PercentageUnavailableException.class, () -> calculationService.calculate(request));
     }
 } 

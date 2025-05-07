@@ -50,10 +50,10 @@ class CalculationControllerTest {
 
     @Test
     void calculate_ShouldReturnResult_WhenRequestIsValid() throws Exception {
-        // Arrange
+        // Given
         when(calculationService.calculate(any(CalculationRequest.class))).thenReturn(response);
 
-        // Act & Assert
+        // When & Then
         mockMvc.perform(post("/calculate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -67,10 +67,10 @@ class CalculationControllerTest {
 
     @Test
     void calculate_ShouldReturnBadRequest_WhenRequestIsInvalid() throws Exception {
-        // Arrange
+        // Given
         request = new CalculationRequest(-1.0, 20.0);
 
-        // Act & Assert
+        // When & Then
         mockMvc.perform(post("/calculate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
@@ -79,81 +79,81 @@ class CalculationControllerTest {
 
     @Test
     void calculate_ShouldHandleException_AndLogError() throws Exception {
-        // Arrange
+        // Given
         when(calculationService.calculate(any(CalculationRequest.class)))
                 .thenThrow(new RuntimeException("Internal error"));
 
-        // Act & Assert
+        // When & Then
         mockMvc.perform(post("/calculate")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().is5xxServerError());
 
-        verify(logService).saveLog(any()); // verifica que se intente loggear el error
+        verify(logService).saveLog(any()); 
     }
 
     @Test
     void logSuccess_ShouldLogSerializationError_WhenObjectMapperFails() throws Exception {
+        // Given
         CalculationController controller = new CalculationController(calculationService, logService, objectMapper);
         ObjectMapper mockMapper = Mockito.mock(ObjectMapper.class);
         when(mockMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("fail") {});
     }
 
     @Test
-void logSuccess_ShouldHandleJsonProcessingException() {
-    // Arrange
-    ObjectMapper mockMapper = Mockito.mock(ObjectMapper.class);
-    LogService mockLogService = Mockito.mock(LogService.class);
-    CalculationService mockCalculationService = Mockito.mock(CalculationService.class);
+    void logSuccess_ShouldHandleJsonProcessingException() {
+        // Given
+        ObjectMapper mockMapper = Mockito.mock(ObjectMapper.class);
+        LogService mockLogService = Mockito.mock(LogService.class);
+        CalculationService mockCalculationService = Mockito.mock(CalculationService.class);
 
-    CalculationController controller = new CalculationController(mockCalculationService, mockLogService, mockMapper);
-    CalculationRequest request = new CalculationRequest(10.0, 20.0);
-    CalculationResponse response = new CalculationResponse(30.0, 0.1);
+        CalculationController controller = new CalculationController(mockCalculationService, mockLogService, mockMapper);
+        CalculationRequest request = new CalculationRequest(10.0, 20.0);
+        CalculationResponse response = new CalculationResponse(30.0, 0.1);
 
-    // Simula que falla al serializar el request
-    try {
-        when(mockMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("fail") {});
-    } catch (JsonProcessingException e) {
-        // No ocurre realmente
+        // Simulate request serialization failure
+        try {
+            when(mockMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("fail") {});
+        } catch (JsonProcessingException e) {
+            // Expected exception
+        }
+
+        // When & Then
+        try {
+            java.lang.reflect.Method method = CalculationController.class.getDeclaredMethod("logSuccess", CalculationRequest.class, CalculationResponse.class);
+            method.setAccessible(true);
+            method.invoke(controller, request, response);
+        } catch (Exception e) {
+            fail("Should not throw: " + e.getMessage());
+        }
     }
 
-    // Act
-    // Ejecutar vía reflexión para llamar método privado (si no es público)
-    // O convertir temporalmente a `public` si lo prefieres
-    try {
-        java.lang.reflect.Method method = CalculationController.class.getDeclaredMethod("logSuccess", CalculationRequest.class, CalculationResponse.class);
-        method.setAccessible(true);
-        method.invoke(controller, request, response);
-    } catch (Exception e) {
-        fail("Should not throw: " + e.getMessage());
-    }
-}
-@Test
-void logError_ShouldHandleJsonProcessingException() {
-    // Arrange
-    ObjectMapper mockMapper = Mockito.mock(ObjectMapper.class);
-    LogService mockLogService = Mockito.mock(LogService.class);
-    CalculationService mockCalculationService = Mockito.mock(CalculationService.class);
+    @Test
+    void logError_ShouldHandleJsonProcessingException() {
+        // Given
+        ObjectMapper mockMapper = Mockito.mock(ObjectMapper.class);
+        LogService mockLogService = Mockito.mock(LogService.class);
+        CalculationService mockCalculationService = Mockito.mock(CalculationService.class);
 
-    CalculationController controller = new CalculationController(mockCalculationService, mockLogService, mockMapper);
-    CalculationRequest request = new CalculationRequest(10.0, 20.0);
-    Exception exception = new RuntimeException("Some error");
+        CalculationController controller = new CalculationController(mockCalculationService, mockLogService, mockMapper);
+        CalculationRequest request = new CalculationRequest(10.0, 20.0);
+        Exception exception = new RuntimeException("Some error");
 
-    // Simula fallo en writeValueAsString
-    try {
-        when(mockMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("fail") {});
-    } catch (JsonProcessingException e) {
-        // nada
-    }
+        // Simulate writeValueAsString failure
+        try {
+            when(mockMapper.writeValueAsString(any())).thenThrow(new JsonProcessingException("fail") {});
+        } catch (JsonProcessingException e) {
+            // Expected exception
+        }
 
-    // Act
-    try {
-        java.lang.reflect.Method method = CalculationController.class.getDeclaredMethod("logError", CalculationRequest.class, Exception.class);
-        method.setAccessible(true);
-        method.invoke(controller, request, exception);
-    } catch (Exception e) {
-        fail("Should not throw: " + e.getMessage());
+        // When & Then
+        try {
+            java.lang.reflect.Method method = CalculationController.class.getDeclaredMethod("logError", CalculationRequest.class, Exception.class);
+            method.setAccessible(true);
+            method.invoke(controller, request, exception);
+        } catch (Exception e) {
+            fail("Should not throw: " + e.getMessage());
+        }
     }
-}
 
 }

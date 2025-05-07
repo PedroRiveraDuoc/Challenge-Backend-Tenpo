@@ -24,7 +24,7 @@ class ChallengeApplicationTests {
 
 	@Test
 	void contextLoads() {
-		// Test will fail if Spring context fails to start
+		// Verifies that the Spring application context loads successfully
 	}
 
     @Test
