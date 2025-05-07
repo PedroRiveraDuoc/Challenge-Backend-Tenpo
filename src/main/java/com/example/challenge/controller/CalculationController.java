@@ -42,41 +42,43 @@ public class CalculationController {
     @Operation(summary = "Calculate result with dynamic percentage")
     public ResponseEntity<CalculationResponse> calculate(@Valid @RequestBody CalculationRequest request) {
         log.info("Received calculation request: {}", request);
-        
         try {
             CalculationResponse response = calculationService.calculate(request);
-            
-            // Log the successful request asynchronously
-            try {
-                logService.saveLog(new ApiCallLogDto(
-                        null,
-                        null,
-                        "/calculate",
-                        objectMapper.writeValueAsString(request),
-                        objectMapper.writeValueAsString(response),
-                        "SUCCESS"
-                ));
-            } catch (JsonProcessingException e) {
-                log.error("Error serializing log data", e);
-            }
-            
+            logSuccess(request, response);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Log the failed request asynchronously
-            try {
-                logService.saveLog(new ApiCallLogDto(
-                        null,
-                        null,
-                        "/calculate",
-                        objectMapper.writeValueAsString(request),
-                        e.getMessage(),
-                        "ERROR"
-                ));
-            } catch (JsonProcessingException ex) {
-                log.error("Error serializing log data", ex);
-            }
-            
+            logError(request, e);
             throw e;
+        }
+    }
+
+    private void logSuccess(CalculationRequest request, CalculationResponse response) {
+        try {
+            logService.saveLog(new ApiCallLogDto(
+                    null,
+                    null,
+                    "/calculate",
+                    objectMapper.writeValueAsString(request),
+                    objectMapper.writeValueAsString(response),
+                    "SUCCESS"
+            ));
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing log data", e);
+        }
+    }
+
+    private void logError(CalculationRequest request, Exception e) {
+        try {
+            logService.saveLog(new ApiCallLogDto(
+                    null,
+                    null,
+                    "/calculate",
+                    objectMapper.writeValueAsString(request),
+                    e.getMessage(),
+                    "ERROR"
+            ));
+        } catch (JsonProcessingException ex) {
+            log.error("Error serializing log data", ex);
         }
     }
 } 
