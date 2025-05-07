@@ -157,3 +157,11 @@ Response:
 - Coverage
 - 83.7%
 ![image](https://github.com/user-attachments/assets/7ba3fca9-10f4-41fd-bffa-fd355ca61ed3)
+
+### Postman
+http://localhost:8080/api/v1/calculate
+![image](https://github.com/user-attachments/assets/d0188e3a-f69a-4604-b30a-7afa7ac8bd29)
+http://localhost:8080/api/v1/logs?page=0&size=10
+![image](https://github.com/user-attachments/assets/6bf62468-3fc1-40d4-b03c-965650570a5d)
+
+
