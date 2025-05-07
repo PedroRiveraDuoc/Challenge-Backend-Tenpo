@@ -152,3 +152,8 @@ Response:
 - Nivel aplicación: DEBUG
 - Nivel caché: TRACE
 - Nivel web: INFO
+
+### SonarCloud
+- Coverage
+- 83.7%
+![image](https://github.com/user-attachments/assets/7ba3fca9-10f4-41fd-bffa-fd355ca61ed3)
